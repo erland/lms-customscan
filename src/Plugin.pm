@@ -93,7 +93,7 @@ sub initPlugin {
 	my $class = shift;
 	$class->SUPER::initPlugin(@_);
 	$PLUGINVERSION = Slim::Utils::PluginManager->dataForPlugin($class)->{'version'};
-	Plugins::CustomScan::Scanner::initDatabase();
+	Plugins::CustomScan::Scanner->initDatabase();
 	if ( !$CUSTOMSCAN_HOOK ) {
 		refreshTitleFormats();
 		installHook();

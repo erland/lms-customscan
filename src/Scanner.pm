@@ -39,6 +39,7 @@ my $useLongUrls = 1;
 my $PLUGINVERSION;
 my $modules = ();
 my $driver;
+my $initialized = 0;
 
 my $prefs = preferences('plugin.customscan');
 my $serverPrefs = preferences('server');
@@ -78,7 +79,13 @@ sub initScanner {
 	}
 }
 
+sub postDBConnect {
+        my ($class, $dbh) = @_;
+        createSQLiteFunctions($dbh);
+}
+
 sub initDatabase {
+	my $class = shift;
 	#Check if tables exists and create them if not
 	$driver = $serverPrefs->get('dbsource');
 	$driver =~ s/dbi:(.*?):(.*)$/$1/;
@@ -90,9 +97,20 @@ sub initDatabase {
 
 	$log->debug("Checking if customscan_track_attributes database table exists\n");
 	my $dbh = getCurrentDBH();
+
 	if($driver eq 'SQLite') {
-		createSQLiteFunctions();
+		if (UNIVERSAL::can(Slim::Utils::OSDetect->getOS()->sqlHelperClass(),"addPostConnectHandler")) {
+			$log->debug("Setting up custom SQL functions in SQLite using 7.9 API");
+			if(!$initialized) {
+				Slim::Utils::OSDetect->getOS()->sqlHelperClass()->addPostConnectHandler($class);
+				$initialized = 1;
+			}
+		}else {
+			$log->debug("Setting up custom SQL functions in SQLite using pre 7.9 API");
+			createSQLiteFunctions();
+		}
 	}
+	
 	$log->warn("CustomScan: Creating database tables\n");
 	executeSQLFile("dbcreate.sql");
 
@@ -442,8 +460,10 @@ sub initDatabase {
 }
 
 sub createSQLiteFunctions {
+	my $dbh = shift;
+	$dbh ||= getCurrentDBH();
 	if($driver eq 'SQLite') {
-		my $dbh = getCurrentDBH();
+		$log->debug("Setting up custom SQL functions in SQLite");
 		$dbh->func('if', 3, sub {
 			my ($expr,$true,$false) = @_;
 			return $expr?$true:$false;
