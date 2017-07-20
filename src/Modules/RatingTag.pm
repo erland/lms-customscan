@@ -73,8 +73,8 @@ sub getCustomScanFunctions {
 			}
 		]
 	);
-	my $request = Slim::Control::Request::executeRequest(undef,['licensemanager','validate','application:CustomScan']);
-	my $licensed = $request->getResult("result");
+	#my $request = Slim::Control::Request::executeRequest(undef,['licensemanager','validate','application:CustomScan']);
+	my $licensed = 1; #$request->getResult("result");
 	if(!$licensed) {
 		$functions{'licensed'} = 0;
 	}

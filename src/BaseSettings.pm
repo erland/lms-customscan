@@ -63,9 +63,9 @@ sub handler {
 	}
 	$params->{'subpages'} = \%currentSubPages;
 	$params->{'subpage'} = $class->currentPage($client,$params);
-	$params->{'licensemanager'} = Plugins::CustomScan::Plugin::isPluginsInstalled(undef,'LicenseManagerPlugin');
-	my $request = Slim::Control::Request::executeRequest(undef,['licensemanager','validate','application:CustomScan']);
-	$params->{'licensed'} = $request->getResult("result");
+	$params->{'licensemanager'} = 1; #Plugins::CustomScan::Plugin::isPluginsInstalled(undef,'LicenseManagerPlugin');
+	#my $request = Slim::Control::Request::executeRequest(undef,['licensemanager','validate','application:CustomScan']);
+	$params->{'licensed'} = 1; #$request->getResult("result");
 	return $class->SUPER::handler($client, $params);
 }
 		

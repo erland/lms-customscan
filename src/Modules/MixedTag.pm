@@ -137,9 +137,9 @@ sub getCustomScanFunctions {
 			}
 		]
 	);
-	my $licenseManager = Plugins::CustomScan::Plugin::isPluginsInstalled(undef,'LicenseManagerPlugin');
-	my $request = Slim::Control::Request::executeRequest(undef,['licensemanager','validate','application:CustomScan']);
-	my $licensed = $request->getResult("result");
+	my $licenseManager = 1; #Plugins::CustomScan::Plugin::isPluginsInstalled(undef,'LicenseManagerPlugin');
+	#my $request = Slim::Control::Request::executeRequest(undef,['licensemanager','validate','application:CustomScan']);
+	my $licensed = 1; #$request->getResult("result");
 	if(!$licensed) {
 		$functions{'licensed'} = 0;
 	}
